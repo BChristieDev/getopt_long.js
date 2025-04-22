@@ -1,0 +1,35 @@
+{
+  "name": "getopt_long.js",
+  "version": "1.0.0",
+  "description": "JavaScript option parser inspired by getopt_long(3)",
+  "keywords": [
+    "cli",
+    "command-line",
+    "console",
+    "getopt",
+    "getopt_long",
+    "parser",
+    "shell",
+    "terminal",
+    "tty"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BChristieDev/getopt_long.js.git"
+  },
+  "license": "MIT",
+  "author": "Brandon Christie <bchristie.dev@gmail.com>",
+  "type": "module",
+  "main": "./lib/getopt_long",
+  "directories": {
+    "examples": "examples",
+    "lib": "lib",
+    "tests": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@types/node": "^22.14.1"
+  }
+}
