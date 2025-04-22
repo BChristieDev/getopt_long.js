@@ -1,0 +1,49 @@
+#! /usr/bin/env node
+
+/**
+ * @file       tests/shortopts
+ * @author     Brandon Christie <bchristie.dev@gmail.com>
+ */
+
+// @ts-check
+'use strict';
+
+/** @import { Option } from '../lib/getopt_long.mjs' */
+
+import { Constants,
+         extern,
+         getopt_long } from '../lib/getopt_long.mjs';
+
+const { no_argument } = Constants;
+
+/**
+ * @param {number} argc
+ * @param {string[]} argv
+ */
+function main(argc, argv)
+{
+    const longoptind = [ 0 ];
+    /** @type {Option[]} */
+    const longopts = [
+        { name: '', has_arg: no_argument, flag: 0, val: '' }
+    ];
+    let opt;
+
+    while ((opt = getopt_long(argc, argv, 'ab::c:', longopts, longoptind)) != -1)
+    {
+        switch (opt)
+        {
+            case 'a':
+            case 'b':
+            case 'c':
+                console.log(`option ${opt} with optarg '${extern.optarg}'`);
+            case '?':
+                break;
+            default:
+                console.log(`?? getopt returned character code 0${opt.toString(8)} ??`);
+                break;
+        }
+    }
+}
+
+main(process.argv.length, process.argv);

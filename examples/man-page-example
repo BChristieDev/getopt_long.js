@@ -1,0 +1,94 @@
+#! /usr/bin/env node
+
+/**
+ * @file       examples/man-page-example
+ * @author     Brandon Christie <bchristie.dev@gmail.com>
+ * 
+ * @see        https://linux.die.net/man/3/getopt_long
+ */
+
+// @ts-check
+'use strict';
+
+/** @import { Option } from '../lib/getopt_long.mjs' */
+
+import { Constants,
+         extern,
+         getopt_long } from '../lib/getopt_long.mjs';
+
+const { no_argument, required_argument } = Constants;
+
+/**
+ * @param {number} argc
+ * @param {string[]} argv
+ */
+function main(argc, argv)
+{
+    let c;
+    let digit_optind = 0;
+
+    while (1)
+    {
+        const this_option_optind = extern.optind ? extern.optind : 2;
+        const option_index = [ 0 ];
+        /** @type {Option[]} */
+        const long_options = [
+            { name: 'add',     has_arg: required_argument, flag: 0, val: 0   },
+            { name: 'append',  has_arg: no_argument,       flag: 0, val: 0   },
+            { name: 'delete',  has_arg: required_argument, flag: 0, val: 0   },
+            { name: 'verbose', has_arg: no_argument,       flag: 0, val: 0   },
+            { name: 'create',  has_arg: no_argument,       flag: 0, val: 'c' },
+            { name: 'file',    has_arg: no_argument,       flag: 0, val: 0   }
+        ];
+
+        c = getopt_long(argc, argv, 'abc:d:012', long_options, option_index);
+
+        if (c === -1)
+            break;
+
+        switch (c)
+        {
+            case 0:
+                process.stdout.write(`option ${long_options[option_index[0]].name}`);
+                if (extern.optarg)
+                    process.stdout.write(` with arg ${extern.optarg}`);
+                process.stdout.write('\n');
+                break;
+            case '0':
+            case '1':
+            case '2':
+                if (digit_optind != 0 && digit_optind != this_option_optind)
+                    console.log('digits occur in two different argv-elements.');
+                digit_optind = this_option_optind;
+                console.log(`option ${c}`);
+                break;
+            case 'a':
+                console.log('option a');
+                break;
+            case 'b':
+                console.log('option b');
+                break;
+            case 'c':
+                console.log(`option c with value '${extern.optarg}'`);
+                break;
+            case 'd':
+                console.log(`option d with value '${extern.optarg}'`);
+                break;
+            case '?':
+                break;
+            default:
+                console.log(`?? getopt returned character code 0${c.toString(8)} ??`);
+                break;
+        }
+    }
+
+    if (extern.optind < argc)
+    {
+        process.stdout.write('non-option ARGV-elements: ');
+        while (extern.optind < argc)
+            process.stdout.write(`${argv[extern.optind++]} `);
+        process.stdout.write('\n');
+    }
+}
+
+main(process.argv.length, process.argv);
