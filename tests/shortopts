@@ -10,11 +10,11 @@
 
 /** @import { Option } from '../lib/getopt_long.mjs' */
 
-import { Constants,
+import { constants,
          extern,
          getopt_long } from '../lib/getopt_long.mjs';
 
-const { no_argument } = Constants;
+const { no_argument } = constants;
 
 /**
  * @param {number} argc
