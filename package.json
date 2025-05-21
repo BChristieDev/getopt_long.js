@@ -21,9 +21,15 @@
   "author": "Brandon Christie <bchristie.dev@gmail.com>",
   "type": "module",
   "main": "lib/getopt_long.mjs",
+  "files": [
+    "dist/getopt_long.d.ts",
+    "lib/getopt_long.mjs"
+  ],
+  "types": "dist/getopt_long.d.ts",
   "directories": {
-    "examples": "examples",
     "lib": "lib",
+    "dist": "dist",
+    "examples": "examples",
     "tests": "tests"
   },
   "scripts": {
