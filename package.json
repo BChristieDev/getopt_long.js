@@ -1,6 +1,6 @@
 {
   "name": "getopt_long.js",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "JavaScript option parser inspired by getopt_long(3)",
   "keywords": [
     "cli",
@@ -20,6 +20,10 @@
   "license": "MIT",
   "author": "Brandon Christie <bchristie.dev@gmail.com>",
   "type": "module",
+  "exports": {
+    "import": "./lib/getopt_long.mjs",
+    "require": "./lib/getopt_long.cjs"
+  },
   "main": "lib/getopt_long.mjs",
   "types": "dist/getopt_long.d.ts",
   "directories": {
@@ -30,6 +34,7 @@
   },
   "files": [
     "dist/getopt_long.d.ts",
+    "lib/getopt_long.cjs",
     "lib/getopt_long.mjs"
   ],
   "scripts": {
