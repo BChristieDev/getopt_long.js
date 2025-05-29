@@ -1,22 +1,20 @@
 #! /usr/bin/env node
 
 /**
- * @file       tests/longopts
+ * @file       examples/shortopts
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  */
 
 // @ts-check
 'use strict';
 
-/** @import { Option } from '../lib/getopt_long.mjs' */
+/** @import { Option } from 'getopt_long.js' */
 
 import { constants,
          extern,
-         getopt_long } from '../lib/getopt_long.mjs';
+         getopt_long } from 'getopt_long.js';
 
-const { no_argument,
-        optional_argument,
-        required_argument } = constants;
+const { no_argument } = constants;
 
 /**
  * @param {number} argc
@@ -27,13 +25,11 @@ function main(argc, argv)
     const longoptind = [ 0 ];
     /** @type {Option[]} */
     const longopts = [
-        { name: 'lettera', has_arg: no_argument,       flag: 0, val: 'a' },
-        { name: 'letterb', has_arg: optional_argument, flag: 0, val: 'b' },
-        { name: 'letterc', has_arg: required_argument, flag: 0, val: 'c' }
+        { name: '', has_arg: no_argument, flag: 0, val: '' }
     ];
     let opt;
 
-    while ((opt = getopt_long(argc, argv, '', longopts, longoptind)) != -1)
+    while ((opt = getopt_long(argc, argv, 'ab::c:', longopts, longoptind)) != -1)
     {
         switch (opt)
         {
@@ -41,7 +37,6 @@ function main(argc, argv)
             case 'b':
             case 'c':
                 console.log(`option ${opt} with optarg '${extern.optarg}'`);
-                break;
             case '?':
                 break;
             default:

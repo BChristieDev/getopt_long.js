@@ -10,11 +10,11 @@
 // @ts-check
 'use strict';
 
-/** @import { Option } from '../lib/getopt_long.mjs' */
+/** @import { Option } from 'getopt_long.js' */
 
 import { constants,
          extern,
-         getopt_long } from '../lib/getopt_long.mjs';
+         getopt_long } from 'getopt_long.js';
 
 const { no_argument, required_argument } = constants;
 
