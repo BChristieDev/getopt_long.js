@@ -1,0 +1,50 @@
+/**
+ * @file       tests/short-no-arg.simple
+ * @author     Brandon Christie <bchristie.dev@gmail.com>
+ */
+
+// @ts-check
+'use strict';
+
+/** @import { Option } from '../lib/getopt_long.cjs' */
+
+const { constants,
+        extern,
+        getopt_long } = require('../lib/getopt_long.cjs');
+
+const { no_argument } = constants;
+const args = [ '', '', '-abc', 'foo' ];
+
+/**
+ * @param {number} argc
+ * @param {string[]} argv
+ */
+function main(argc, argv)
+{
+    /** @type {Option[]} */
+    const longopts = [
+        { name: '', has_arg: no_argument, flag: 0, val: 0 }
+    ];
+    let opt;
+
+    while ((opt = getopt_long(argc, argv, 'abc', longopts, [ 0 ])) !== -1)
+    {
+        switch (opt)
+        {
+            case 'a':
+            case 'b':
+            case 'c':
+                if (extern.optarg !== undefined)
+                    throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
+
+                break;
+            default:
+                throw new Error('unreachable code');
+        }
+    }
+
+    if (args[extern.optind] !== 'foo')
+        throw new Error(`positional argument is '${argv[extern.optind]}'. Expected 'foo'.`);
+}
+
+main(args.length, args);
