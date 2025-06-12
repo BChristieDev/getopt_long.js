@@ -8,6 +8,26 @@ on:
     branches: [main]
 
 jobs:
+  deno:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        deno-version: [2.2.x, 2.4.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno v${{ matrix.deno-version }}
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ matrix.deno-version }}
+          cache: true
+
+      - name: Run tests
+        run: deno test --config tests/deno/deno.json --shuffle --parallel tests/deno
+
   node:
     runs-on: ubuntu-latest
 
