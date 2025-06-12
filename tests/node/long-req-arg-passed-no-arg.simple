@@ -1,0 +1,44 @@
+/**
+ * @file       tests/node/long-req-arg-passed-no-arg.simple
+ * @author     Brandon Christie <bchristie.dev@gmail.com>
+ */
+
+// @ts-check
+'use strict';
+
+/** @import { Option } from '../../lib/getopt_long.cjs' */
+
+const { constants,
+        extern,
+        getopt_long } = require('../../lib/getopt_long.cjs');
+
+const { required_argument } = constants;
+const args = [ '', '', '--foo' ];
+
+/**
+ * @param {number} argc
+ * @param {string[]} argv
+ */
+function main(argc, argv)
+{
+    /** @type {Option[]} */
+    const longopts = [
+        { name: 'foo', has_arg: required_argument, flag: 0, val: 0 }
+    ];
+    /** @type {string|number} */
+    let opt;
+
+    while ((opt = getopt_long(argc, argv, '', longopts, [ 0 ])) !== -1)
+    {
+        if (opt !== '?')
+            throw new Error(`opt is '${opt}'. Expected '?'.`);
+
+        if (extern.optarg !== undefined)
+            throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
+    }
+
+    if (args[extern.optind] !== undefined)
+        throw new Error(`positional argument is '${argv[extern.optind]}'. Expected 'undefined'.`);
+}
+
+main(args.length, args);

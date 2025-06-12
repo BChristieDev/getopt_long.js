@@ -38,7 +38,7 @@
     "lib/getopt_long.mjs"
   ],
   "scripts": {
-    "test": "npx peter tests"
+    "test-node": "npx peter tests/node"
   },
   "devDependencies": {
     "peter": "^2.4.7"

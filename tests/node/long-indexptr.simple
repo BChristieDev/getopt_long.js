@@ -1,16 +1,16 @@
 /**
- * @file       tests/long-indexptr.simple
+ * @file       tests/node/long-indexptr.simple
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  */
 
 // @ts-check
 'use strict';
 
-/** @import { Option } from '../lib/getopt_long.cjs' */
+/** @import { Option } from '../../lib/getopt_long.cjs' */
 
 const { constants,
         extern,
-        getopt_long } = require('../lib/getopt_long.cjs');
+        getopt_long } = require('../../lib/getopt_long.cjs');
 
 const { no_argument } = constants;
 const args = [ '', '', '--bar', 'qux' ];
@@ -28,23 +28,19 @@ function main(argc, argv)
         { name: 'bar', has_arg: no_argument, flag: 0, val: 0 },
         { name: 'baz', has_arg: no_argument, flag: 0, val: 0 }
     ];
+    /** @type {string|number} */
     let opt;
 
     while ((opt = getopt_long(argc, argv, '', longopts, indexptr)) !== -1)
     {
-        switch (opt)
-        {
-            case 0:
-                if (longopts[indexptr[0]].name !== 'bar')
-                    throw new Error(`indexptr is pointing at '${longopts[indexptr[0]]}'. Expected 'bar'.`);
+        if (opt !== 0)
+            throw new Error(`opt is '${opt}'. Expected '0'.`);
 
-                if (extern.optarg !== undefined)
-                    throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
+        if (longopts[indexptr[0]].name !== 'bar')
+            throw new Error(`indexptr is '${longopts[indexptr[0]].name}'. Expected 'bar'.`);
 
-                break;
-            default:
-                throw new Error('unreachable code');
-        }
+        if (extern.optarg !== undefined)
+            throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
     }
 
     if (args[extern.optind] !== 'qux')

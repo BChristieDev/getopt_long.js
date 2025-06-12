@@ -1,16 +1,16 @@
 /**
- * @file       tests/short-no-arg.simple
+ * @file       tests/node/short-no-arg.simple
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  */
 
 // @ts-check
 'use strict';
 
-/** @import { Option } from '../lib/getopt_long.cjs' */
+/** @import { Option } from '../../lib/getopt_long.cjs' */
 
 const { constants,
         extern,
-        getopt_long } = require('../lib/getopt_long.cjs');
+        getopt_long } = require('../../lib/getopt_long.cjs');
 
 const { no_argument } = constants;
 const args = [ '', '', '-abc', 'foo' ];
@@ -21,26 +21,22 @@ const args = [ '', '', '-abc', 'foo' ];
  */
 function main(argc, argv)
 {
+    const optstring = 'abc';
     /** @type {Option[]} */
     const longopts = [
         { name: '', has_arg: no_argument, flag: 0, val: 0 }
     ];
+    /** @type {string|number} */
     let opt;
 
-    while ((opt = getopt_long(argc, argv, 'abc', longopts, [ 0 ])) !== -1)
+    while ((opt = getopt_long(argc, argv, optstring, longopts, [ 0 ])) !== -1)
     {
-        switch (opt)
-        {
-            case 'a':
-            case 'b':
-            case 'c':
-                if (extern.optarg !== undefined)
-                    throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
+        // @ts-ignore
+        if (!optstring.includes(opt))
+            throw new Error(`opt is '${opt}'. Expected '0'.`);
 
-                break;
-            default:
-                throw new Error('unreachable code');
-        }
+        if (extern.optarg !== undefined)
+            throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
     }
 
     if (args[extern.optind] !== 'foo')

@@ -1,16 +1,16 @@
 /**
- * @file       tests/long-opt-arg-passed-no-arg.simple
+ * @file       tests/node/long-opt-arg-passed-no-arg.simple
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  */
 
 // @ts-check
 'use strict';
 
-/** @import { Option } from '../lib/getopt_long.cjs' */
+/** @import { Option } from '../../lib/getopt_long.cjs' */
 
 const { constants,
         extern,
-        getopt_long } = require('../lib/getopt_long.cjs');
+        getopt_long } = require('../../lib/getopt_long.cjs');
 
 const { optional_argument } = constants;
 const args = [ '', '', '--foo', 'bar' ];
@@ -25,20 +25,16 @@ function main(argc, argv)
     const longopts = [
         { name: 'foo', has_arg: optional_argument, flag: 0, val: 0 }
     ];
+    /** @type {string|number} */
     let opt;
 
     while ((opt = getopt_long(argc, argv, '', longopts, [ 0 ])) !== -1)
     {
-        switch (opt)
-        {
-            case 0:
-                if (extern.optarg !== undefined)
-                    throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
+        if (opt !== 0)
+            throw new Error(`opt is '${opt}'. Expected '0'.`);
 
-                break;
-            default:
-                throw new Error('unreachable code');
-        }
+        if (extern.optarg !== undefined)
+            throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
     }
 
     if (args[extern.optind] !== 'bar')
