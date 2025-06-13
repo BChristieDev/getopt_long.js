@@ -35,7 +35,8 @@
   "files": [
     "dist/getopt_long.d.ts",
     "lib/getopt_long.cjs",
-    "lib/getopt_long.mjs"
+    "lib/getopt_long.mjs",
+    "README.md"
   ],
   "scripts": {
     "test-deno": "deno test --config tests/deno/deno.json --shuffle --parallel tests/deno",
