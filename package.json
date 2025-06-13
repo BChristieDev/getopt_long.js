@@ -39,8 +39,11 @@
     "README.md"
   ],
   "scripts": {
+    "prepublishOnly": "npm run test:deno && npm run test:node",
     "test:deno": "deno test --config tests/deno/deno.json --shuffle --parallel tests/deno",
-    "test:node": "npx peter tests/node"
+    "test:node": "npx peter tests/node",
+    "preversion": "npm run test:deno && npm run test:node",
+    "postversion": "git push && git push origin tag v$npm_package_version"
   },
   "devDependencies": {
     "peter": "^2.4.7"
