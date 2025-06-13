@@ -29,7 +29,7 @@ function main(argc, argv)
     ];
     let opt;
 
-    while ((opt = getopt_long(argc, argv, 'ab::c:', longopts, longoptind)) != -1)
+    while ((opt = getopt_long(argc, argv, 'ab::c:', longopts, longoptind)) !== -1)
     {
         switch (opt)
         {
@@ -37,6 +37,7 @@ function main(argc, argv)
             case 'b':
             case 'c':
                 console.log(`option ${opt} with optarg '${extern.optarg}'`);
+                break;
             case '?':
                 break;
             default:

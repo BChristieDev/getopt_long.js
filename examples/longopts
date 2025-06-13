@@ -33,7 +33,7 @@ function main(argc, argv)
     ];
     let opt;
 
-    while ((opt = getopt_long(argc, argv, '', longopts, longoptind)) != -1)
+    while ((opt = getopt_long(argc, argv, '', longopts, longoptind)) !== -1)
     {
         switch (opt)
         {
