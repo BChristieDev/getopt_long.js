@@ -39,8 +39,8 @@
     "README.md"
   ],
   "scripts": {
-    "test-deno": "deno test --config tests/deno/deno.json --shuffle --parallel tests/deno",
-    "test-node": "npx peter tests/node"
+    "test:deno": "deno test --config tests/deno/deno.json --shuffle --parallel tests/deno",
+    "test:node": "npx peter tests/node"
   },
   "devDependencies": {
     "peter": "^2.4.7"
