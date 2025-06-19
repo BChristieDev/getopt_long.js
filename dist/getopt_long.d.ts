@@ -22,7 +22,7 @@ type Extern = {
 
 export type Option = {
     /** Name of the long option. */
-    name: string;
+    name: string | number | null;
     /**
      * `Constants.no_argument` (or 0) if the option does not take an argument;
      * `Constants.required_argument` (or 1) if the option requires an argument; or
