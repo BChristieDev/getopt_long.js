@@ -26,7 +26,7 @@ jobs:
           cache: true
 
       - name: Run tests
-        run: deno test --config tests/deno/deno.json --shuffle --parallel tests/deno
+        run: grep -oP '(?<="test:deno":\s").+(?=",)' package.json | bash
 
   node:
     runs-on: ubuntu-latest
