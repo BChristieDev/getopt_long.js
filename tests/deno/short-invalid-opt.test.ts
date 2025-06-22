@@ -15,11 +15,15 @@ test('Invalid option', () => {
     const longopts: Option[] = [
         { name: '', has_arg: no_argument, flag: 0, val: 0 }
     ];
+    let stderr = '';
     let opt: string | number;
+
+    console.error = (...args) => stderr = args.join(' ');
 
     while ((opt = getopt_long(args.length, args, '', longopts, [ 0 ])) !== -1)
     {
         expect(opt).toBe('?');
+        expect(stderr).toBe('invalid option -- a');
         expect(extern.optarg).toBe(undefined);
     }
 

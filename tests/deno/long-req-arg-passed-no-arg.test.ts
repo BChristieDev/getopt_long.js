@@ -15,11 +15,15 @@ test('Expect required argument passed no argument', () => {
     const longopts: Option[] = [
         { name: 'foo', has_arg: required_argument, flag: 0, val: 0 }
     ];
+    let stderr = '';
     let opt: string | number;
+
+    console.error = (...args) => stderr = args.join(' ');
 
     while ((opt = getopt_long(args.length, args, '', longopts, [ 0 ])) !== -1)
     {
         expect(opt).toBe('?');
+        expect(stderr).toBe('option \'--foo\' requires an argument');
         expect(extern.optarg).toBe(undefined);
     }
 
