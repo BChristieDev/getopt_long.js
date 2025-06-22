@@ -31,7 +31,7 @@ function main(argc, argv)
     while ((opt = getopt_long(argc, argv, '', longopts, [ 0 ])) !== -1)
     {
         if (opt !== '?')
-            throw new Error(`opt is '${opt}'. Expected '0'.`);
+            throw new Error(`opt is '${opt}'. Expected '?'.`);
 
         if (extern.optarg !== undefined)
             throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
