@@ -28,9 +28,7 @@ function main(argc, argv)
     /** @type {string|number} */
     let opt;
 
-    extern.opterr = 0;
-
-    while ((opt = getopt_long(argc, argv, 'a:', longopts, [ 0 ])) !== -1)
+    while ((opt = getopt_long(argc, argv, ':a:', longopts, [ 0 ])) !== -1)
     {
         if (opt !== ':')
             throw new Error(`opt is '${opt}'. Expected ':'.`);

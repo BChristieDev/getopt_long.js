@@ -17,9 +17,7 @@ test('Expects required argument passed no argument silent', () => {
     ];
     let opt: string | number;
 
-    extern.opterr = 0;
-
-    while ((opt = getopt_long(args.length, args, 'a:', longopts, [ 0 ])) !== -1)
+    while ((opt = getopt_long(args.length, args, ':a:', longopts, [ 0 ])) !== -1)
     {
         expect(opt).toBe(':');
         expect(extern.optarg).toBe(undefined);
