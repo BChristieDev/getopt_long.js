@@ -25,15 +25,20 @@ function main(argc, argv)
     const longopts = [
         { name: 'foo', has_arg: required_argument, flag: 0, val: 0 }
     ];
+    let stderr = '';
     /** @type {string|number} */
     let opt;
 
+    console.error = (...args) => stderr = args.join(' ');
     extern.opterr = 0;
 
     while ((opt = getopt_long(argc, argv, '', longopts, [ 0 ])) !== -1)
     {
         if (opt !== ':')
             throw new Error(`opt is '${opt}'. Expected ':'.`);
+
+        if (stderr !== '')
+            throw new Error(`stderr is '${stderr}'. Expected ''.`);
 
         if (extern.optarg !== undefined)
             throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
