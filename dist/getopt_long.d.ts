@@ -4,8 +4,11 @@
  */
 
 type Constants = {
+    /** No argument to the option is expected. */
     no_argument: number;
+    /** An argument to the option is required. */
     required_argument: number;
+    /** An argument to the option may be presented. */
     optional_argument: number;
 }
 
