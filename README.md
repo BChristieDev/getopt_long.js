@@ -53,12 +53,12 @@ while ((opt = getopt_long(process.argv.length, process.argv, 'a:', longopts, lon
 ```
 
 ```sh
-$ ./script --foo bar --foo=baz --foo
+$ ./simple --foo bar --foo=baz --foo
 option 'foo' has argument 'bar'
 option 'foo' has argument 'baz'
 option '--foo' requires an argument
 
-$ ./script -a foo -abar -a
+$ ./simple -a foo -abar -a
 option 'a' has argument 'foo'
 option 'a' has argument 'bar'
 option requires an argument -- a
@@ -123,14 +123,14 @@ if (extern.optind < process.argv.length)
 ```
 
 ```sh
-$ ./script --foo --bar=bar --baz=baz --baz qux -- --quux quux
+$ ./complex --foo --bar=bar --baz=baz --baz qux -- --quux quux
 option 'a' has argument 'undefined'
 option 'b' has argument 'bar'
 option 'c' has argument 'baz'
 option 'c' has argument 'qux'
 positional arguments: --quux quux
 
-$ ./script --aa -bb -cc -c d -- -e e
+$ ./complex --aa -bb -cc -c d -- -e e
 option 'a' has argument 'undefined'
 option 'a' has argument 'undefined'
 option 'b' has argument 'b'
@@ -138,11 +138,11 @@ option 'c' has argument 'c'
 option 'c' has argument 'd'
 positional arguments: -e e
 
-$ ./script --on --off
+$ ./complex --on --off
 option 'on' changed frob state to '1'
 option 'off' changed frob state to '0'
 
-$ ./script --silent --foo --qux --bar
+$ ./complex --silent --foo --qux --bar
 option 'a' has argument 'undefined'
 option 'b' has argument 'undefined'
 ```

@@ -1,0 +1,30 @@
+#! /usr/bin/env node
+
+/**
+ * @file       examples/simple
+ * @author     Brandon Christie <bchristie.dev@gmail.com>
+ */
+
+import { constants, extern, getopt_long } from 'getopt_long.js';
+
+const { required_argument } = constants;
+
+const longopts = [
+    { name: 'foo', has_arg: required_argument, flag: 0, val: 0 }
+];
+
+const longindex = [ 0 ];
+let opt;
+
+while ((opt = getopt_long(process.argv.length, process.argv, 'a:', longopts, longindex)) !== -1)
+{
+    switch (opt)
+    {
+        case 0:
+            console.log(`option '${longopts[longindex[0]].name}' has argument '${extern.optarg}'`);
+            break;
+        case 'a':
+            console.log(`option '${opt}' has argument '${extern.optarg}'`);
+            break;
+    }
+}

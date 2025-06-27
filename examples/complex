@@ -1,0 +1,58 @@
+#! /usr/bin/env node
+
+/**
+ * @file       examples/complex
+ * @author     Brandon Christie <bchristie.dev@gmail.com>
+ */
+
+import { constants, extern, getopt_long } from 'getopt_long.js';
+
+const { no_argument, optional_argument, required_argument } = constants;
+
+const frob_state = {
+    unset: -1,
+    off: 0,
+    on: 1
+};
+
+const frob_flag = [ frob_state.unset ];
+
+const longopts = [
+    { name: 'foo',    has_arg: no_argument,       flag: 0,         val: 'a'            },
+    { name: 'bar',    has_arg: optional_argument, flag: 0,         val: 'b'            },
+    { name: 'baz',    has_arg: required_argument, flag: 0,         val: 'c'            },
+    { name: 'on',     has_arg: no_argument,       flag: frob_flag, val: frob_state.on  },
+    { name: 'off',    has_arg: no_argument,       flag: frob_flag, val: frob_state.off },
+    { name: 'silent', has_arg: no_argument,       flag: 0,         val: 's'            }
+];
+
+const longindex = [ 0 ];
+let opt;
+
+while ((opt = getopt_long(process.argv.length, process.argv, 'ab::c:', longopts, longindex)) !== -1)
+{
+    switch (opt)
+    {
+        case 0:
+            console.log(`option '${longopts[longindex[0]].name}' changed frob state to '${frob_flag[0]}'`);
+            break;
+        case 'a':
+        case 'b':
+        case 'c':
+            console.log(`option '${opt}' has argument '${extern.optarg}'`);
+            break;
+        case 's':
+            extern.opterr = 0;
+            break;
+    }
+}
+
+if (extern.optind < process.argv.length)
+{
+    process.stdout.write('positional arguments: ');
+
+    while (extern.optind < process.argv.length)
+        process.stdout.write(`${process.argv[extern.optind++]} `);
+
+    process.stdout.write('\n');
+}
