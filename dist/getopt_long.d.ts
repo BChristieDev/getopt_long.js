@@ -59,4 +59,4 @@ export const extern: Extern;
  * @param longopts Array of Option objects, each element representing a valid long option
  * @param indexptr Array serving as a pointer to store the zero-based index of a long option in longopts
  */
-export function getopt_long(argc: number, argv: string[], shortopts: string, longopts: Option[], indexptr: number[]): string | number;
+export function getopt_long(argc: number, argv: string[], shortopts: string, longopts: Option[], indexptr: number[] | null): string | number;
