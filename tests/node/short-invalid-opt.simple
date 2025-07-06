@@ -36,8 +36,8 @@ function main(argc, argv)
         if (opt !== '?')
             throw new Error(`opt is '${opt}'. Expected '?'.`);
 
-        if (stderr !== 'invalid option -- a')
-            throw new Error(`stderr is '${stderr}'. Expected 'invalid option -- a'.`);
+        if (stderr !== 'invalid option -- \'a\'')
+            throw new Error(`stderr is '${stderr}'. Expected 'invalid option -- 'a''.`);
 
         if (extern.optarg !== undefined)
             throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);

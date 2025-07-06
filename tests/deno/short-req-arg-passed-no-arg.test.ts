@@ -23,7 +23,7 @@ test('Expects required argument passed no argument', () => {
     while ((opt = getopt_long(args.length, args, 'a:', longopts, [ 0 ])) !== -1)
     {
         expect(opt).toBe('?');
-        expect(stderr).toBe('option requires an argument -- a');
+        expect(stderr).toBe('option requires an argument -- \'a\'');
         expect(extern.optarg).toBe(undefined);
     }
 

@@ -23,7 +23,7 @@ test('Invalid option', () => {
     while ((opt = getopt_long(args.length, args, '', longopts, [ 0 ])) !== -1)
     {
         expect(opt).toBe('?');
-        expect(stderr).toBe('invalid option -- a');
+        expect(stderr).toBe('invalid option -- \'a\'');
         expect(extern.optarg).toBe(undefined);
     }
 

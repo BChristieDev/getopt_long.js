@@ -36,8 +36,8 @@ function main(argc, argv)
         if (opt !== '?')
             throw new Error(`opt is '${opt}'. Expected '?'.`);
 
-        if (stderr !== 'option requires an argument -- a')
-            throw new Error(`stderr is '${stderr}'. Expected 'option requires an argument -- a'.`);
+        if (stderr !== 'option requires an argument -- \'a\'')
+            throw new Error(`stderr is '${stderr}'. Expected 'option requires an argument -- 'a''.`);
 
         if (extern.optarg !== undefined)
             throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);
