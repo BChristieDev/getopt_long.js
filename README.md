@@ -61,7 +61,7 @@ option '--foo' requires an argument
 $ ./simple -a foo -abar -a
 option 'a' has argument 'foo'
 option 'a' has argument 'bar'
-option requires an argument -- a
+option requires an argument -- 'a'
 ```
 
 ### Complex
