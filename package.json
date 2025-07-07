@@ -1,6 +1,6 @@
 {
   "name": "getopt_long.js",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "JavaScript option parser inspired by getopt_long(3)",
   "keywords": [
     "cli",
