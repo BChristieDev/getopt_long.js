@@ -11,7 +11,7 @@ const { test } = Deno;
 const { required_argument } = constants;
 
 test('Expects required argument passed required argument', () => {
-    const args = [ '', '', '--foo', 'bar', 'baz' ];
+    const args = [ '', '--foo', 'bar', 'baz' ];
     const longopts: Option[] = [
         { name: 'foo', has_arg: required_argument, flag: 0, val: 0 }
     ];

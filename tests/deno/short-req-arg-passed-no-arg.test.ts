@@ -5,13 +5,14 @@
 
 import type { Option } from '../../lib/getopt_long.mjs';
 import { expect } from '@std/expect';
+import { basename } from '@std/path';
 import { constants, extern, getopt_long } from '../../lib/getopt_long.mjs';
 
 const { test } = Deno;
 const { no_argument } = constants;
 
 test('Expects required argument passed no argument', () => {
-    const args = [ '', '', '-a' ];
+    const args = [ basename(import.meta.filename!), '-a' ];
     const longopts: Option[] = [
         { name: '', has_arg: no_argument, flag: 0, val: 0 }
     ];
@@ -23,7 +24,7 @@ test('Expects required argument passed no argument', () => {
     while ((opt = getopt_long(args.length, args, 'a:', longopts, [ 0 ])) !== -1)
     {
         expect(opt).toBe('?');
-        expect(stderr).toBe('option requires an argument -- \'a\'');
+        expect(stderr).toBe(`${args[0]}: option requires an argument -- 'a'`);
         expect(extern.optarg).toBe(undefined);
     }
 

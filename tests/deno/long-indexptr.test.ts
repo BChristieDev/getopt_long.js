@@ -11,7 +11,7 @@ const { test } = Deno;
 const { no_argument } = constants;
 
 test('Index pointer', () => {
-    const args = [ '', '', '--bar', 'qux' ];
+    const args = [ '', '--bar', 'qux' ];
     const indexptr = [ 0 ];
     const longopts: Option[] = [
         { name: 'foo', has_arg: no_argument, flag: 0, val: 0 },

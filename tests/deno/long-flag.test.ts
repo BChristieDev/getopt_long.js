@@ -11,7 +11,7 @@ const { test } = Deno;
 const { no_argument } = constants;
 
 test('Flag', () => {
-    const args = [ '', '', '--foo', 'bar' ];
+    const args = [ '', '--foo', 'bar' ];
     const foo = [ 0 ];
     const longopts: Option[] = [
         { name: 'foo', has_arg: no_argument, flag: foo, val: 1 }

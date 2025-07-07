@@ -11,7 +11,7 @@ const { test } = Deno;
 const { no_argument } = constants;
 
 test('Invalid option silent', () => {
-    const args = [ '', '', '--foo', 'bar' ];
+    const args = [ '', '--foo', 'bar' ];
     const longopts: Option[] = [
         { name: '', has_arg: no_argument, flag: 0, val: 0 }
     ];

@@ -11,7 +11,7 @@ const { test } = Deno;
 const { no_argument } = constants;
 
 test('End of options delimiter', () => {
-    const args = [ '', '', '-a', '--', '-b' ];
+    const args = [ '', '-a', '--', '-b' ];
     const longopts: Option[] = [
         { name: '', has_arg: no_argument, flag: 0, val: 0 }
     ];

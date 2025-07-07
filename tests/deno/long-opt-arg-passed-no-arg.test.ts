@@ -11,7 +11,7 @@ const { test } = Deno;
 const { optional_argument } = constants;
 
 test('Expects optional argument passed no argument', () => {
-    const args = [ '', '', '--foo', 'bar' ];
+    const args = [ '', '--foo', 'bar' ];
     const longopts: Option[] = [
         { name: 'foo', has_arg: optional_argument, flag: 0, val: 0 }
     ];

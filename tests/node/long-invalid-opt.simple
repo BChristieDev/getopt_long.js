@@ -8,12 +8,13 @@
 
 /** @import { Option } from '../../lib/getopt_long.cjs' */
 
+const { basename }    = require('node:path');
 const { constants,
         extern,
         getopt_long } = require('../../lib/getopt_long.cjs');
 
 const { no_argument } = constants;
-const args = [ '', '', '--foo', 'bar' ];
+const args = [ '', basename(__filename), '--foo', 'bar' ];
 
 /**
  * @param {number} argc
@@ -36,8 +37,8 @@ function main(argc, argv)
         if (opt !== '?')
             throw new Error(`opt is '${opt}'. Expected '?'.`);
 
-        if (stderr !== 'unrecognized option \'--foo\'')
-            throw new Error(`stderr is '${stderr}'. Expected 'unrecognized option '--foo''.`);
+        if (stderr !== `${argv[1]}: unrecognized option '--foo'`)
+            throw new Error(`stderr is '${stderr}'. Expected '${argv[1]}: unrecognized option '--foo''.`);
 
         if (extern.optarg !== undefined)
             throw new Error(`optarg is '${extern.optarg}'. Expected 'undefined'.`);

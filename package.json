@@ -46,6 +46,7 @@
     "postversion": "git push && git push origin tag v$npm_package_version"
   },
   "devDependencies": {
+    "@types/node": "^24.0.10",
     "peter": "^2.4.7"
   }
 }
