@@ -3,24 +3,29 @@
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  */
 
-import type { Option } from '../../lib/getopt_long.mjs';
+import type { Option } from '../../src/index.ts';
 import { expect } from '@std/expect';
-import { constants, extern, getopt_long } from '../../lib/getopt_long.mjs';
+import { basename } from '@std/path';
+import { constants, extern, getopt_long } from '../../src/index.ts';
 
 const { test } = Deno;
 const { no_argument } = constants;
 
 test('Expects no argument passed optional argument', () => {
-    const args = [ '', '--foo=bar', 'baz' ];
+    const args = [ basename(import.meta.filename!), '--foo=bar', 'baz' ];
     const longopts: Option[] = [
-        { name: 'foo', has_arg: no_argument, flag: 0, val: 0 }
+        { name: 'foo', has_arg: no_argument, flag: null, val: 0 }
     ];
+    let stderr = '';
     let opt: string | number;
 
-    while ((opt = getopt_long(args.length, args, '', longopts, [ 0 ])) !== -1)
+    console.error = (...args) => stderr = args.join(' ');
+
+    while ((opt = getopt_long(args.length, args, '', longopts, null)) !== -1)
     {
-        expect(opt).toBe(0);
-        expect(extern.optarg).toBe(undefined);
+        expect(opt).toBe('?');
+        expect(stderr).toBe(`${args[0]}: option '--foo' doesn't allow an argument`);
+        expect(extern.optarg).toBe(null);
     }
 
     expect(args[extern.optind]).toBe('baz');
