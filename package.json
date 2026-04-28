@@ -18,35 +18,48 @@
     "url": "git+https://github.com/BChristieDev/getopt_long.js.git"
   },
   "license": "MIT",
-  "author": "Brandon Christie <bchristie.dev@gmail.com>",
+  "author": {
+    "name": "Brandon Christie",
+    "email": "bchristie.dev@gmail.com"
+  },
   "type": "module",
   "exports": {
-    "import": "./lib/getopt_long.mjs",
-    "require": "./lib/getopt_long.cjs"
+    ".": {
+      "import": {
+        "types": "./dist/esm/types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/types/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
   },
-  "main": "lib/getopt_long.mjs",
-  "types": "dist/getopt_long.d.ts",
-  "directories": {
-    "lib": "lib",
-    "dist": "dist",
-    "examples": "examples",
-    "tests": "tests"
-  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/types/index.d.ts",
   "files": [
-    "dist/getopt_long.d.ts",
-    "lib/getopt_long.cjs",
-    "lib/getopt_long.mjs",
+    "./dist/**/*",
+    "!**/*.tsbuildinfo",
+    "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "prepublishOnly": "npm run test:deno && npm run test:node",
-    "test:deno": "deno test --config tests/deno/deno.json --shuffle --parallel tests/deno",
-    "test:node": "npx peter tests/node",
-    "preversion": "npm run test:deno && npm run test:node",
+    "prebuild": "rm -rf dist/",
+    "build": "npm run build:cjs && npm run build:esm",
+    "postbuild": "printf '{\n  \"type\": \"commonjs\"\n}\n' >dist/cjs/package.json",
+    "build:cjs": "npx tsc -p tsconfig.cjs.json",
+    "build:esm": "npx tsc -p tsconfig.esm.json",
+    "prepublishOnly": "npm run test",
+    "test": "npm run test:deno && npm run test:node",
+    "test:deno": "deno test --config tests/deno/deno.json --parallel --shuffle tests/deno/**/*",
+    "test:node": "node --import tsx --test tests/node/**/*",
+    "preversion": "npm run test",
     "postversion": "git push && git push origin tag v$npm_package_version"
   },
   "devDependencies": {
-    "@types/node": "^24.0.10",
-    "peter": "^2.4.7"
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
   }
 }

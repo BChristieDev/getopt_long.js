@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    // Type Checking
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+
+    // Modules
+    "module": "nodenext",
+    "noUncheckedSideEffectImports": true,
+    "resolveJsonModule": true,
+    "types": [ "node" ],
+
+    // Emit
+    "declaration": true,
+    "declarationMap": true,
+    "noEmit": true,
+    "sourceMap": true,
+
+    // JavaScript Support
+    "allowJs": true,
+    "checkJs": true,
+
+    // Interop Constraints
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    // Language and Environment
+    "lib": [ "esnext" ],
+    "moduleDetection": "force",
+    "target": "esnext",
+
+    // Projects
+    "composite": true,
+
+    // Completeness
+    "skipLibCheck": true,
+  }
+}

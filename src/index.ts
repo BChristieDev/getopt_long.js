@@ -1,297 +1,238 @@
 /**
- * @file       lib/getopt_long.mjs
+ * @file       src/index.ts
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  */
 
-// @ts-check
-'use strict';
+import { basename } from 'node:path';
 
-/**
- * @typedef Constants
- * @type {object}
- * @property {number} no_argument No argument to the option is expected.
- * @property {number} required_argument An argument to the option is required.
- * @property {number} optional_argument An argument to the option may be presented.
- */
-
-/**
- * @typedef Extern
- * @type {object}
- * @property {string|undefined} optarg Stores the argument of an option.
- * @property {number} optind Next index in `argv` array to process; default `2`.
- * @property {number} opterr Error reporting flag, set to `0` to suppress default error messages; default `1`.
- * @property {string|number} optopt Stores the option that caused an error.
- */
-
-/**
- * @typedef Option
- * @type {object}
- * @property {string|number|null} name Name of the long option.
- * @property {number} has_arg `constants.no_argument` (or 0) if the option does not take an argument;
- * `constants.required_argument` (or 1) if the option requires an argument; or `constants.optional_argument`
- * (or 2) if the option takes an optional argument.
- * @property {string[]|number[]|number|null} flag Specifies how results are returned for a long option.
- * If `flag` is an array, then `getopt_long` returns `0` and `val` will be assigned to the first index of
- * `flag`, otherwise `getopt_long` returns `val`.
- * @property {string|number} val Value to return, or be assigned to the first index of `flag`.
- */
-
-/** @type {Constants} */
-const constants = {
-    no_argument: 0,
-    required_argument: 1,
-    optional_argument: 2
+interface IConstants {
+    /** No argument to the option is expected. */
+    no_argument: number;
+    /** An argument to the option is required. */
+    required_argument: number;
+    /** An argument to the option may be presented. */
+    optional_argument: number;
 };
 
-Object.freeze(constants);
+interface IExtern {
+    /** Stores the argument of an option. */
+    optarg: string | null;
+    /** Next index in `argv` array to process; default `2`. */
+    optind: number;
+    /** Error reporting flag, set to `0` to suppress default error messages; default `1`. */
+    opterr: number;
+    /** Stores the option that caused an error. */
+    optopt: string | number;
+    /** Resets parser's internal state */
+    optreset: number;
+};
+
+interface IOption<T extends string | number | null> {
+    /** Name of the long option. */
+    name: string;
+    /**
+     * `constants.no_argument` (or 0) if the option does not take an argument;
+     * `constants.required_argument` (or 1) if the option requires an argument; or
+     * `constants.optional_argument` (or 2) if the option takes an optional argument.
+     */
+    has_arg: number;
+    /**
+     * Specifies how results are returned for a long option. If `flag` is not `null` then `getopt_long`
+     * returns `0` and `val` will be assigned to the first index of `flag`, otherwise `getopt_long`
+     * returns `val`.
+     */
+    flag: T extends null ? null : T[];
+    /** Value to return, or be assigned to the first index of `flag`. */
+    val: T extends null ? (string | number) : T;
+}
+
+export type Option = IOption<string> | IOption<number> | IOption<null>;
 
 // @ts-ignore
 const isDeno = typeof Deno !== 'undefined' ? true : false;
-
-/** @type {Extern} */
-const extern = {
-    optarg: undefined,
-    opterr: 1,
-    optind: isDeno ? 1 : 2,
-    optopt: 0
-};
-
 let nextchar = 0;
 
-/**
- * @param {string} path
- * @returns {string}
- */
-function basename(path)
+const constants: IConstants = Object.freeze({
+    no_argument: 0,
+    required_argument: 1,
+    optional_argument: 2
+} as const);
+
+const extern: IExtern = {
+    optarg: null,
+    opterr: 1,
+    optind: isDeno ? 1 : 2,
+    optopt: 0,
+    optreset: 0
+};
+
+function errInvalidOpt(msg: string, colon?: number): string
 {
-    const filename = path.split(/[\\\/]/);
-
-    return filename[filename.length - 1];
-}
-
-/**
- * @param {number} argc
- * @param {string[]} argv
- * @param {string} shortopts
- * @param {Option[]} longopts
- * @param {number[]|null} indexptr
- * @returns {void}
- */
-function validateParams(argc, argv, shortopts, longopts, indexptr)
-{
-    if (typeof argc !== 'number')
-        throw new TypeError(`expected 'number' but argument is of type '${typeof argc}'`);
-
-    if (!Array.isArray(argv) || !argv.every(s => typeof s === 'string'))
-        throw new TypeError(`expected 'string[]' but argument is of type ${typeof argv}`);
-
-    if (typeof shortopts !== 'string')
-        throw new TypeError(`expected 'string' but argument is of type '${typeof shortopts}'`);
-
-    if (Array.isArray(longopts))
+    if (!extern.opterr)
     {
-        longopts.forEach(longopt => {
-            if (typeof longopt !== 'object')
-                throw new TypeError(`expected 'object' but element is of type '${typeof longopt}'`);
+        if (colon)
+            return ':';
 
-            if (typeof longopt?.name !== 'string' && longopt?.name !== 0 && longopt?.name !== null)
-                throw new TypeError(`expected 'string | null' but element property 'name' is of type '${typeof longopt?.name}'`);
-
-            if (typeof longopt?.has_arg !== 'number')
-                throw new TypeError(`expected 'number' but element property 'has_arg' is of type '${typeof longopt?.has_arg}'`);
-
-            if (!Array.isArray(longopt?.flag) && longopt?.flag !== 0 && longopt?.flag !== null)
-                throw new TypeError(`expected 'string[] | number[] | null' but element property 'flag' is of type '${longopt?.flag}'`);
-
-            if (typeof longopt?.val !== 'string' && typeof longopt?.val !== 'number')
-                throw new TypeError(`expected 'string | number' but element property 'val' is of type '${longopt?.val}'`);
-        });
+        return '?';
     }
-    else
-        throw new TypeError(`expected 'Option[]' but argument is of type '${typeof longopts}'`);
 
-    if (!Array.isArray(indexptr) && indexptr !== null)
-        throw new TypeError(`expected 'number[] | null' but argument is of type '${typeof indexptr}'`);
-
-    if (typeof extern.opterr !== 'number')
-        throw new TypeError(`'opterr' is not a number (received '${typeof extern.opterr}')`);
-
-    if (typeof extern.optind !== 'number')
-        throw new TypeError(`'optind' is not a number (received '${typeof extern.optind}')`);
-}
-
-/**
- * @param {string|number} optopt
- * @param {string} errMsg
- * @returns {string}
- */
-function errInvalidOpt(optopt, errMsg)
-{
-    extern.optind++;
-    extern.optopt = optopt;
-    nextchar = 0;
-
-    if (extern.opterr)
-        console.error(errMsg);
+    console.error(msg);
 
     return '?';
 }
 
-/**
- * @param {string|number} optopt
- * @param {string} errMsg
- * @returns {string}
- */
-function errRequiresArg(optopt, errMsg)
+function parseArg(argv: string[], hasArg: number, optargind: number)
 {
-    extern.optopt = optopt;
-
-    if (extern.opterr)
-    {
-        console.error(errMsg);
-        return '?'
-    }
-
-    return ':';
-}
-
-/**
- * @param {number} argc
- * @param {string[]} argv
- * @param {number} hasArg
- * @param {number} optargind
- * @param {string|number} opt
- * @param {string} errMsg
- * @returns {string|undefined}
- */
-function parseArg(argc, argv, hasArg, optargind, opt, errMsg)
-{
-    if (hasArg === constants.required_argument && optargind <= 0 && extern.optind >= argc)
-        return errRequiresArg(opt, errMsg);
-
     if (hasArg === constants.required_argument || (hasArg === constants.optional_argument && optargind > 0))
     {
-        extern.optarg = argv[extern.optind].substring(optargind);
+        extern.optarg = argv[extern.optind]!.substring(optargind);
         extern.optind++;
         nextchar = 0;
     }
     else
-        extern.optarg = undefined;
+        extern.optarg = null;
 }
 
-/**
- * @param {number} argc
- * @param {string[]} argv
- * @param {Option[]} longopts
- * @param {number[]|null} indexptr
- * @returns {string|number}
- */
-function parseLongOpt(argc, argv, longopts, indexptr)
+function parseLongOpt(argc: number, argv: string[], longopts: Option[], indexptr: number[] | null): string | number
 {
-    const progname = basename(argv[isDeno ? 0 : 1]);
-    const eq = argv[extern.optind].indexOf('=', 3);
-    const opt = argv[extern.optind].substring(2, eq === -1 ? argv[extern.optind].length : eq);
+    const progname = basename(argv[isDeno ? 0 : 1]!);
+    const eq = argv[extern.optind]!.indexOf('=', 3);
+    const opt = argv[extern.optind]!.substring(2, eq === -1 ? argv[extern.optind]!.length : eq);
     const optarrind = longopts.findIndex(longopt => longopt.name === opt);
 
     if (optarrind === -1)
-        return errInvalidOpt(0, `${progname}: unrecognized option '--${opt}'`);
-
-    if (longopts[optarrind].has_arg <= constants.no_argument || longopts[optarrind].has_arg > constants.optional_argument || eq === -1)
+    {
+        extern.optopt = 0;
         extern.optind++;
+
+        return errInvalidOpt(`${progname}: unrecognized option '--${opt}'`);
+    }
 
     if (indexptr !== null)
         indexptr[0] = optarrind;
 
-    const err = parseArg(argc, argv, longopts[optarrind].has_arg, eq + 1, 0, `${progname}: option '--${opt}' requires an argument`);
+    if (eq >= 0)
+    {
+        if (longopts[optarrind]!.has_arg <= constants.no_argument || longopts[optarrind]!.has_arg > constants.optional_argument)
+        {
+            extern.optopt = 0;
+            extern.optind++;
 
-    if (err)
-        return err;
+            return errInvalidOpt(`${progname}: option '--${opt}' doesn't allow an argument`);
+        }
+    }
+    else
+        extern.optind++;
 
-    if (longopts[optarrind].flag === null || typeof longopts[optarrind].flag === 'number')
-        return longopts[optarrind].val;
+    if (longopts[optarrind]!.has_arg === constants.required_argument && extern.optind >= argc)
+    {
+        extern.optopt = 0;
 
-    longopts[optarrind].flag[0] = longopts[optarrind].val;
+        return errInvalidOpt(`${progname}: option '--${opt}' requires an argument`, 1);
+    }
 
-    return 0;
+    parseArg(argv, longopts[optarrind]!.has_arg, eq + 1);
+
+    if (longopts[optarrind]!.flag !== null)
+    {
+        extern.optopt = 0;
+        longopts[optarrind]!.flag[0] = longopts[optarrind]!.val;
+
+        return 0;
+    }
+
+    return longopts[optarrind]!.val;
 }
 
-/**
- * @param {number} argc
- * @param {string[]} argv
- * @param {string} shortopts
- * @returns {string}
- */
-function parseShortOpt(argc, argv, shortopts)
+function parseShortOpt(argc: number, argv: string[], shortopts: string): string
 {
-    const progname = basename(argv[isDeno ? 0 : 1]);
-    const opt = argv[extern.optind][nextchar];
+    const progname = basename(argv[isDeno ? 0 : 1]!);
+    const opt = argv[extern.optind]![nextchar]!;
     const optstrind = shortopts.indexOf(opt);
-    /** @type {number} */
-    let hasArg;
+    let hasArg = constants.no_argument;
 
     if (optstrind === -1)
-        return errInvalidOpt(opt, `${progname}: invalid option -- '${opt}'`);
+    {
+        extern.optopt = opt;
+        extern.optind++;
+        nextchar = 0;
 
-    if (++nextchar === argv[extern.optind].length)
+        return errInvalidOpt(`${progname}: invalid option -- '${opt}'`);
+    }
+
+    if (++nextchar === argv[extern.optind]!.length)
     {
         extern.optind++;
         nextchar = 0;
     }
 
-    if (shortopts[optstrind + 1] === ':' && shortopts[optstrind + 2] !== ':')
-        hasArg = constants.required_argument;
-    else if (shortopts[optstrind + 1] === ':' && shortopts[optstrind + 2] === ':')
+    if (shortopts.charAt(optstrind + 1) === ':' && shortopts.charAt(optstrind + 2) === ':')
         hasArg = constants.optional_argument;
-    else
-        hasArg = constants.no_argument;
+    else if (shortopts.charAt(optstrind + 1) === ':' && shortopts.charAt(optstrind + 2) !== ';')
+        hasArg = constants.required_argument;
 
-    const err = parseArg(argc, argv, hasArg, nextchar, opt, `${progname}: option requires an argument -- '${opt}'`);
+    if (hasArg === constants.required_argument && extern.optind >= argc)
+    {
+        extern.optopt = 0;
 
-    if (err)
-        return err;
+        return errInvalidOpt(`${progname}: option requires an argument -- '${opt}'`, 1);
+    }
+
+    parseArg(argv, hasArg, nextchar);
 
     return opt;
 }
 
 /**
  * If a short option is recognized the option character is returned. If a long option is recognized
- * `val` is returned if `flag` is `null`, otherwise `0` is returned and the first index of `flag` is
- * assigned to `val`.
- *
+ * `val` is returned if `flag` is `null`, otherwise `0` is returned and `val` is assigned to the first
+ * index of `flag`. If `indexptr` is not `null`, then the index of the long option in `longopts` is
+ * assigned to the first index of `indexptr`.
+ * 
  * If an unrecognized option is encountered `?` is returned. If an option with a missing argument is
- * encountered `?` is returned if `extern.opterr` is non-zero, otherwise `:` is returned.
- *
+ * encountered `?` is returned if `opterr` is non-zero, otherwise `:` is returned.
+ * 
  * If all options are parsed `-1` is returned.
- *
- * @param {number} argc Argument count
- * @param {string[]} argv Argument vector
- * @param {string} shortopts String of characters representing valid short options
- * @param {Option[]} longopts Array of Option objects, each element representing a valid long option
- * @param {number[]|null} indexptr Array serving as a pointer to store the zero-based index of a long option in longopts
- * @returns {string|number}
+ * 
+ * @param argc Argument count
+ * @param argv Argument vector
+ * @param shortopts String of characters representing valid short options
+ * @param longopts Array of `Option` objects representing valid long options
+ * @param indexptr Array that stores the index of a long options in `longopts`
  */
-function getopt_long(argc, argv, shortopts, longopts, indexptr)
+function getopt_long(argc: number, argv: string[], shortopts: string, longopts: Option[], indexptr: number[] | null): string | number
 {
-    validateParams(argc, argv, shortopts, longopts, indexptr);
-
     if (extern.optind >= argc)
         return -1;
 
-    if (shortopts[0] === ':')
+    if (!extern.optind)
+    {
+        extern.optind = isDeno ? 1 : 2;
+        extern.optreset = 1;
+    }
+
+    if (extern.optreset)
+    {
+        extern.optreset = 0;
+        nextchar = 0;
+    }
+
+    if (shortopts.charAt(0) === ':')
         extern.opterr = 0;
 
-    if (nextchar === 0)
+    if (!nextchar)
     {
-        if (argv[extern.optind][0] !== '-' || argv[extern.optind] === '-')
+        if (argv[extern.optind]!.charAt(0) !== '-' || argv[extern.optind]! === '-')
             return -1;
 
-        if (argv[extern.optind] === '--')
+        if (argv[extern.optind]! === '--')
         {
             extern.optind++;
+
             return -1;
         }
 
-        if (argv[extern.optind][1] === '-')
+        if (argv[extern.optind]!.charAt(1) === '-')
             return parseLongOpt(argc, argv, longopts, indexptr);
 
         nextchar++;
