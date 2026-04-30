@@ -12,7 +12,7 @@ interface IConstants {
     required_argument: number;
     /** An argument to the option may be presented. */
     optional_argument: number;
-};
+}
 
 interface IExtern {
     /** Stores the argument of an option. */
@@ -25,7 +25,7 @@ interface IExtern {
     optopt: string | number;
     /** Resets parser's internal state */
     optreset: number;
-};
+}
 
 interface IOption<T extends string | number | null> {
     /** Name of the long option. */
