@@ -1,44 +1,33 @@
-#! /usr/bin/env node
+#! /usr/bin/env -S node --import tsx
 
 /**
- * @file       examples/man-page-example
+ * @file       examples/man-page-example.ts
  * @author     Brandon Christie <bchristie.dev@gmail.com>
  * 
  * @see        https://linux.die.net/man/3/getopt_long
  */
 
-// @ts-check
-'use strict';
-
-/** @import { Option } from 'getopt_long.js' */
-
-import { constants,
-         extern,
-         getopt_long } from 'getopt_long.js';
+import type { Option } from 'getopt_long.js';
+import { constants, extern, getopt_long } from 'getopt_long.js';
 
 const { no_argument, required_argument } = constants;
 
-/**
- * @param {number} argc
- * @param {string[]} argv
- */
-function main(argc, argv)
+function main(argc: number, argv: string[])
 {
-    let c;
+    let c: string | number;
     let digit_optind = 0;
 
     while (1)
     {
         const this_option_optind = extern.optind ? extern.optind : 2;
         const option_index = [ 0 ];
-        /** @type {Option[]} */
-        const long_options = [
-            { name: 'add',     has_arg: required_argument, flag: 0, val: 0   },
-            { name: 'append',  has_arg: no_argument,       flag: 0, val: 0   },
-            { name: 'delete',  has_arg: required_argument, flag: 0, val: 0   },
-            { name: 'verbose', has_arg: no_argument,       flag: 0, val: 0   },
-            { name: 'create',  has_arg: no_argument,       flag: 0, val: 'c' },
-            { name: 'file',    has_arg: no_argument,       flag: 0, val: 0   }
+        const long_options: Option[] = [
+            { name: 'add',     has_arg: required_argument, flag: null, val: 0   },
+            { name: 'append',  has_arg: no_argument,       flag: null, val: 0   },
+            { name: 'delete',  has_arg: required_argument, flag: null, val: 0   },
+            { name: 'verbose', has_arg: no_argument,       flag: null, val: 0   },
+            { name: 'create',  has_arg: required_argument, flag: null, val: 'c' },
+            { name: 'file',    has_arg: required_argument, flag: null, val: 0   }
         ];
 
         c = getopt_long(argc, argv, 'abc:d:012', long_options, option_index);
@@ -49,7 +38,7 @@ function main(argc, argv)
         switch (c)
         {
             case 0:
-                process.stdout.write(`option ${long_options[option_index[0]].name}`);
+                process.stdout.write(`option ${long_options[option_index[0]!]!.name}`);
                 if (extern.optarg)
                     process.stdout.write(` with arg ${extern.optarg}`);
                 process.stdout.write('\n');
@@ -57,7 +46,7 @@ function main(argc, argv)
             case '0':
             case '1':
             case '2':
-                if (digit_optind != 0 && digit_optind != this_option_optind)
+                if (digit_optind !== 0 && digit_optind !== this_option_optind)
                     console.log('digits occur in two different argv-elements.');
                 digit_optind = this_option_optind;
                 console.log(`option ${c}`);

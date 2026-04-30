@@ -24,26 +24,27 @@ $ npm i getopt_long.js
 
 ### Simple
 
-```js
-#! /usr/bin/env node
+```ts
+#! /usr/bin/env -S node --import tsx
 
+import type { Option } from 'getopt_long.js';
 import { constants, extern, getopt_long } from 'getopt_long.js';
 
 const { required_argument } = constants;
 
-const longopts = [
-    { name: 'foo', has_arg: required_argument, flag: 0, val: 0 }
-];
+const longindex: number[] = [];
+let opt: string | number;
 
-const longindex = [ 0 ];
-let opt;
+const longopts: Option[] = [
+    { name: 'foo', has_arg: required_argument, flag: null, val: 0 }
+];
 
 while ((opt = getopt_long(process.argv.length, process.argv, 'a:', longopts, longindex)) !== -1)
 {
     switch (opt)
     {
         case 0:
-            console.log(`option '${longopts[longindex[0]].name}' has argument '${extern.optarg}'`);
+            console.log(`option '${longopts[longindex[0]!]!.name}' has argument '${extern.optarg}'`);
             break;
         case 'a':
             console.log(`option '${opt}' has argument '${extern.optarg}'`);
@@ -53,25 +54,26 @@ while ((opt = getopt_long(process.argv.length, process.argv, 'a:', longopts, lon
 ```
 
 ```sh
-$ ./simple --foo bar --foo=baz --foo
+$ ./simple.ts --foo bar --foo=baz --foo
 option 'foo' has argument 'bar'
 option 'foo' has argument 'baz'
-simple: option '--foo' requires an argument
+simple.ts: option '--foo' requires an argument
 
-$ ./simple -a foo -abar -a
+$ ./simple.ts -a foo -abar -a
 option 'a' has argument 'foo'
 option 'a' has argument 'bar'
-simple: option requires an argument -- 'a'
+simple.ts: option requires an argument -- 'a'
 ```
 
 ### Complex
 
-```js
-#! /usr/bin/env node
+```ts
+#! /usr/bin/env -S node --import tsx
 
+import type { Option } from 'getopt_long.js';
 import { constants, extern, getopt_long } from 'getopt_long.js';
 
-const { no_argument, optional_argument, required_argument } = constants;
+const { no_argument, required_argument, optional_argument } = constants;
 
 const frob_state = {
     unset: -1,
@@ -80,25 +82,24 @@ const frob_state = {
 };
 
 const frob_flag = [ frob_state.unset ];
+const longindex: number[] = [];
+let opt: string | number;
 
-const longopts = [
-    { name: 'foo',    has_arg: no_argument,       flag: 0,         val: 'a'            },
-    { name: 'bar',    has_arg: optional_argument, flag: 0,         val: 'b'            },
-    { name: 'baz',    has_arg: required_argument, flag: 0,         val: 'c'            },
+const longopts: Option[] = [
+    { name: 'foo',    has_arg: no_argument,       flag: null,      val: 'a'            },
+    { name: 'bar',    has_arg: optional_argument, flag: null,      val: 'b'            },
+    { name: 'baz',    has_arg: required_argument, flag: null,      val: 'c'            },
     { name: 'on',     has_arg: no_argument,       flag: frob_flag, val: frob_state.on  },
     { name: 'off',    has_arg: no_argument,       flag: frob_flag, val: frob_state.off },
-    { name: 'silent', has_arg: no_argument,       flag: 0,         val: 's'            }
+    { name: 'silent', has_arg: no_argument,       flag: null,      val: 's'            }
 ];
 
-const longindex = [ 0 ];
-let opt;
-
-while ((opt = getopt_long(process.argv.length, process.argv, 'ab::c:', longopts, longindex)) !== -1)
+while ((opt = getopt_long(process.argv.length, process.argv, 'ab::c:s', longopts, longindex)) !== -1)
 {
     switch (opt)
     {
         case 0:
-            console.log(`option '${longopts[longindex[0]].name}' changed frob state to '${frob_flag[0]}'`);
+            console.log(`option '${longopts[longindex[0]!]!.name}' changed frob state to '${frob_flag[0]}'`);
             break;
         case 'a':
         case 'b':
@@ -123,28 +124,28 @@ if (extern.optind < process.argv.length)
 ```
 
 ```sh
-$ ./complex --foo --bar=bar --baz=baz --baz qux -- --quux quux
-option 'a' has argument 'undefined'
+$ ./complex.ts --foo --bar=bar --baz=baz --baz qux -- --quux quux
+option 'a' has argument 'null'
 option 'b' has argument 'bar'
 option 'c' has argument 'baz'
 option 'c' has argument 'qux'
 positional arguments: --quux quux
 
-$ ./complex -aa -bb -cc -c d -- -e e
-option 'a' has argument 'undefined'
-option 'a' has argument 'undefined'
+$ ./complex.ts -aa -bb -cc -c d -- -e e
+option 'a' has argument 'null'
+option 'a' has argument 'null'
 option 'b' has argument 'b'
 option 'c' has argument 'c'
 option 'c' has argument 'd'
 positional arguments: -e e
 
-$ ./complex --on --off
+$ ./complex.ts --on --off
 option 'on' changed frob state to '1'
 option 'off' changed frob state to '0'
 
-$ ./complex --silent --foo --qux --bar
-option 'a' has argument 'undefined'
-option 'b' has argument 'undefined'
+$ ./complex.ts --silent --foo --qux --bar
+option 'a' has argument 'null'
+option 'b' has argument 'null'
 ```
 
 ## Maintainers
