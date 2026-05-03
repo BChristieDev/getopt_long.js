@@ -5,7 +5,8 @@
 
 import { basename } from 'node:path';
 
-interface IConstants {
+interface IConstants
+{
     /** No argument to the option is expected. */
     no_argument: number;
     /** An argument to the option is required. */
@@ -14,7 +15,8 @@ interface IConstants {
     optional_argument: number;
 }
 
-interface IExtern {
+interface IExtern
+{
     /** Stores the argument of an option. */
     optarg: string | null;
     /** Next index in `argv` array to process; default `2`. */
@@ -27,7 +29,8 @@ interface IExtern {
     optreset: number;
 }
 
-interface IOption<T extends string | number | null> {
+interface IOption<T extends string | number | null>
+{
     /** Name of the long option. */
     name: string;
     /**
@@ -83,17 +86,28 @@ function errInvalidOpt(msg: string, colon?: number): string
 
 function parseArg(argv: string[], hasArg: number, optargind: number)
 {
-    if (hasArg === constants.required_argument || (hasArg === constants.optional_argument && optargind > 0))
+    if (
+        hasArg === constants.required_argument || (
+            hasArg === constants.optional_argument && optargind > 0
+        )
+    )
     {
         extern.optarg = argv[extern.optind]!.substring(optargind);
         extern.optind++;
         nextchar = 0;
     }
     else
+    {
         extern.optarg = null;
+    }
 }
 
-function parseLongOpt(argc: number, argv: string[], longopts: Option[], indexptr: number[] | null): string | number
+function parseLongOpt(
+    argc: number,
+    argv: string[],
+    longopts: Option[],
+    indexptr: number[] | null
+): string | number
 {
     const progname = basename(argv[isDeno ? 0 : 1]!);
     const eq = argv[extern.optind]!.indexOf('=', 3);
@@ -113,7 +127,10 @@ function parseLongOpt(argc: number, argv: string[], longopts: Option[], indexptr
 
     if (eq >= 0)
     {
-        if (longopts[optarrind]!.has_arg <= constants.no_argument || longopts[optarrind]!.has_arg > constants.optional_argument)
+        if (
+            longopts[optarrind]!.has_arg <= constants.no_argument ||
+            longopts[optarrind]!.has_arg > constants.optional_argument
+        )
         {
             extern.optopt = 0;
             extern.optind++;
@@ -122,7 +139,9 @@ function parseLongOpt(argc: number, argv: string[], longopts: Option[], indexptr
         }
     }
     else
+    {
         extern.optind++;
+    }
 
     if (longopts[optarrind]!.has_arg === constants.required_argument && extern.optind >= argc)
     {
@@ -200,7 +219,13 @@ function parseShortOpt(argc: number, argv: string[], shortopts: string): string
  * @param longopts Array of `Option` objects representing valid long options
  * @param indexptr Array that stores the index of a long options in `longopts`
  */
-function getopt_long(argc: number, argv: string[], shortopts: string, longopts: Option[], indexptr: number[] | null): string | number
+function getopt_long(
+    argc: number,
+    argv: string[],
+    shortopts: string,
+    longopts: Option[],
+    indexptr: number[] | null
+): string | number
 {
     if (extern.optind >= argc)
         return -1;
