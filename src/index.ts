@@ -187,7 +187,7 @@ function parseShortOpt(argc: number, argv: string[], shortopts: string): string
 
     if (shortopts.charAt(optstrind + 1) === ':' && shortopts.charAt(optstrind + 2) === ':')
         hasArg = constants.optional_argument;
-    else if (shortopts.charAt(optstrind + 1) === ':' && shortopts.charAt(optstrind + 2) !== ';')
+    else if (shortopts.charAt(optstrind + 1) === ':' && shortopts.charAt(optstrind + 2) !== ':')
         hasArg = constants.required_argument;
 
     if (hasArg === constants.required_argument && extern.optind >= argc)
